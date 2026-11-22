@@ -1,0 +1,23 @@
+APEX-CARBA V.3.0 — Projet Android (APK 100 % hors connexion)
+============================================================
+L'application est embarquée dans l'APK (app/src/main/assets/index.html).
+Aucune permission, aucun accès Internet requis.
+
+MÉTHODE A — Sans rien installer (GitHub, gratuit)
+  1. Créez un compte sur github.com et un nouveau dépôt (repository) vide.
+  2. Envoyez-y TOUT le contenu de ce dossier, y compris le dossier caché .github
+     (sur PC : décompressez, puis glissez tout le contenu dans "Add file > Upload files").
+  3. Onglet "Actions" > "Build APK" > "Run workflow" (la compilation démarre aussi
+     automatiquement après l'envoi).
+  4. Après 3-5 min : ouvrez l'exécution terminée > "Artifacts" > "APEX-CARBA-apk",
+     téléchargez et décompressez : vous obtenez app-debug.apk.
+
+MÉTHODE B — Android Studio
+  File > Open > ce dossier > Build > Build APK(s).
+  Fichier : app/build/outputs/apk/debug/app-debug.apk
+
+INSTALLATION SUR LE TÉLÉPHONE
+  Copiez app-debug.apk (WhatsApp, câble USB, Bluetooth...) puis ouvrez-le.
+  Autorisez "Installer des applications inconnues" si Android le demande.
+  L'application s'appelle APEX-CARBA et fonctionne ensuite en mode avion.
+  Compatible Android 5.0 et plus récent.

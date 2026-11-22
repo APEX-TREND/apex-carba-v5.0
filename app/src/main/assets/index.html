@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>APEX-CARBA V.3.0</title>
+  <style>
+    :root {
+      --bg:#0f172a; --card:#1e293b; --card-alt:#273549; --border:#334155;
+      --text:#f8fafc; --muted:#94a3b8; --accent:#38bdf8; --green:#22c55e;
+      --green-bg:rgba(34,197,94,.14); --amber:#f59e0b; --red:#ef4444;
+      --red-bg:rgba(239,68,68,.14);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    .brand-title{color:#22c55e;letter-spacing:.035em;font-weight:800}
+    .option-checks{display:flex;flex-wrap:wrap;gap:12px}
+    .option-checks label{display:flex;align-items:center;gap:6px;color:#22c55e;text-transform:none;letter-spacing:0;font-size:.95rem;font-weight:700;cursor:pointer}
+    .option-checks input{width:18px;height:18px;accent-color:#22c55e;cursor:pointer}
+    body{background:var(--bg);color:var(--text);padding:20px;line-height:1.5}
+    .container{max-width:1200px;margin:0 auto}
+    header{margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:16px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;text-align:center}header>div{width:100%;text-align:center}.brand-title,.subtitle{text-align:center}.badge{align-self:center;text-align:center}
+    h1{font-size:1.5rem}.subtitle{font-size:.9rem;color:var(--muted)}
+    .badge{background:var(--card-alt);border:1px solid var(--border);color:var(--accent);padding:6px 12px;border-radius:999px;font-size:.8rem;font-weight:600}
+    .grid-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+    .control-group{display:flex;flex-direction:column;gap:6px}
+    label{font-size:.82rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    input,select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:1rem;font-weight:600;outline:none}
+    input:focus,select:focus{border-color:var(--accent)}
+    .section-title{font-size:1rem;margin:0 0 12px;color:var(--text)}
+    .summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+    .stat-label{font-size:.8rem;color:var(--muted);margin-bottom:4px}
+    .stat-value{font-size:1.3rem;font-weight:700}.stat-sub{font-size:.78rem;color:var(--muted);margin-top:4px}
+    .green{color:var(--green)}.accent{color:var(--accent)}.amber{color:var(--amber)}
+    .alert{display:none;background:var(--red-bg);border:1px solid var(--red);color:#fca5a5;padding:14px 18px;border-radius:10px;margin-bottom:20px;font-size:.92rem}
+    .toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin:18px 0 12px}
+    .hint{font-size:.85rem;color:var(--muted)}
+    .btn-group{display:flex;flex-wrap:wrap;gap:8px}
+    button{background:var(--card-alt);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer}
+    button:hover{background:#0284c7;border-color:var(--accent);color:white}
+    .table-wrapper{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;table-layout:auto;text-align:right;font-size:.82rem;min-width:0}
+    th{background:var(--card-alt);color:var(--muted);font-weight:600;font-size:.69rem;text-transform:uppercase;letter-spacing:.01em;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+    th:first-child,td:first-child{text-align:left}
+    td{padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+    tbody tr{cursor:pointer}tbody tr:hover{background:rgba(56,189,248,.08)}
+    tbody tr.active-row{background:rgba(56,189,248,.18);outline:1px solid var(--accent)}
+    tbody tr:last-child td{border-bottom:none}
+    .pill{display:inline-block;background:var(--green-bg);color:var(--green);font-weight:700;padding:3px 6px;border-radius:6px}
+    .stake{font-weight:700;color:var(--accent)}
+    .note{margin-top:16px;padding:13px 15px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:.84rem}
+    footer{margin-top:20px;text-align:center;font-size:.8rem;color:var(--muted)}
+    .locale-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;width:100%}
+    .locale-control{display:flex;flex-direction:column;gap:5px;min-width:145px;text-align:left}
+    .locale-control label{font-size:.75rem}
+    .locale-control select{padding:8px 10px}
+    @media(max-width:600px){body{padding:12px}h1{font-size:1.25rem}.grid-controls{padding:14px;gap:12px}.stat-value{font-size:1.15rem}.locale-control{min-width:130px;flex:1}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1 class="brand-title">APEX-CARBA</h1>
+      <p class="subtitle">Calcul automatique des mises, récupération des pertes et bénéfice net cible.</p>
+    </div>
+    <span class="badge" data-i18n="offline">100 % hors connexion</span>
+    <div class="locale-controls">
+      <div class="locale-control">
+        <label for="languageSelect" data-i18n="language">Langue</label>
+        <select id="languageSelect" aria-label="Language">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="uz">O‘zbekcha</option>
+        </select>
+      </div>
+      <div class="locale-control">
+        <label for="currencySelect" data-i18n="currency">Devise</label>
+        <select id="currencySelect" aria-label="Currency">
+          <option value="EUR">Euro (€)</option>
+          <option value="USD">US dollar ($)</option>
+          <option value="RUB">Rouble russe (₽)</option>
+          <option value="UZS">So‘m (сўм)</option>
+          <option value="XOF" selected>F CFA (XOF)</option>
+          <option value="XAF">F CFA (XAF)</option>
+          <option value="USDT">USDT</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <h2 class="section-title">Paramètres du calcul</h2>
+  <div class="grid-controls">
+    <div class="control-group option-selector">
+      <label>Nombre d'options à calculer</label>
+      <div class="option-checks">
+        <label><input type="checkbox" class="option-count" value="1" checked> 1 option</label>
+        <label><input type="checkbox" class="option-count" value="2"> 2 options</label>
+        <label><input type="checkbox" class="option-count" value="3"> 3 options</label>
+      </div>
+      <div class="stat-sub" id="optionModeHint">3 options sélectionnées</div>
+    </div>
+    <div class="control-group" id="cote1Group"><label for="cote1">Cote option 1</label><input type="number" id="cote1" min="1.01" step="0.01" value="1.90"></div>
+    <div class="control-group" id="cote2Group"><label for="cote2">Cote option 2</label><input type="number" id="cote2" min="1.01" step="0.01" value="7.63"></div>
+    <div class="control-group" id="cote3Group"><label for="cote3">Cote option 3</label><input type="number" id="cote3" min="1.01" step="0.01" value="4.50"></div>
+    <div class="control-group"><label for="benefice">Bénéfice net souhaité (F)</label><input type="number" id="benefice" min="1" step="10" value="500"></div>
+    <div class="control-group"><label for="essaisSupp">Essais supplémentaires</label>
+      <select id="essaisSupp">
+        <option value="0">0 ( 1 essais au total)</option>
+        <option value="1">1 ( 2 essais au total)</option>
+        <option value="2" selected>2 ( 3 essais au total)</option>
+        <option value="3">3 ( 4 essais au total)</option>
+        <option value="4">4 ( 5 essais au total)</option>
+        <option value="5">5 ( 6 essais au total)</option>
+        <option value="6">6 ( 7 essais au total)</option>
+        <option value="7">7 ( 8 essais au total)</option>
+        <option value="8">8 ( 9 essais au total)</option>
+        <option value="9">9 ( 10 essais au total)</option>
+        <option value="10">10 ( 11 essais au total)</option>
+        <option value="11">11 ( 12 essais au total)</option>
+        <option value="12">12 ( 13 essais au total)</option>
+        <option value="13">13 ( 14 essais au total)</option>
+        <option value="14">14 ( 15 essais au total)</option>
+        <option value="15">15 ( 16 essais au total)</option>
+        <option value="16">16 ( 17 essais au total)</option>
+        <option value="17">17 ( 18 essais au total)</option>
+        <option value="18">18 ( 19 essais au total)</option>
+        <option value="19">19 ( 20 essais au total)</option>
+      </select>
+    </div>
+    <div class="control-group"><label for="arrondi">Mode de calcul</label>
+      <select id="arrondi"><option value="ceil">Arrondi au franc supérieur</option><option value="exact" selected>Exact (2 décimales)</option></select>
+    </div>
+  </div>
+
+  <div id="alertBox" class="alert" role="alert"></div>
+
+  <div class="summary-cards">
+    <div class="stat-card"><div class="stat-label">Capital total requis</div><div class="stat-value amber" id="statCapital">—</div><div class="stat-sub" id="statPaliers">Pour 20 essais au total</div></div>
+    <div class="stat-card"><div class="stat-label">Bénéfice net minimal visé</div><div class="stat-value green" id="statBenefice">—</div><div class="stat-sub">Après récupération des mises précédentes</div></div>
+    <div class="stat-card"><div class="stat-label">Cote combinée (Dutching)</div><div class="stat-value accent" id="statCoteComb">—</div><div class="stat-sub" id="statMulti">Multiplicateur : —</div></div>
+    <div class="stat-card"><div class="stat-label">Probabilité implicite couverte</div><div class="stat-value" id="statProba">—</div><div class="stat-sub" id="statMarge">Part non couverte : —</div></div>
+  </div>
+
+  <div class="toolbar">
+    <span class="hint">Touchez une ligne pour marquer le palier en cours.</span>
+    <div class="btn-group">
+      <button type="button" id="btnReset">Réinitialiser</button>
+      <button type="button" id="btnCopy">Copier le tableau</button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead><tr id="tableHeaderRow">
+        <th>Palier</th><th>Pertes à récupérer</th><th>Mise option 1</th><th>Mise option 2</th><th>Mise option 3</th>
+        <th>Total du palier</th><th>Cumul engagé</th><th>Bénéfice net minimal</th>
+      </tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <strong>À savoir :</strong> le bénéfice affiché est le bénéfice minimal parmi les trois issues, après déduction de toutes les mises engagées dans le palier courant et les paliers précédents. Le calcul suppose qu'une seule des trois options gagne et que les cotes restent inchangées. Une couverture mathématique ne garantit pas qu'une issue gagnante soit effectivement trouvée.
+  </div>
+  <footer>Copyright by CARBA — Tous droits réservés. Mis à jour le 20 novembre 2026. APEX-CARBA V.3.0.</footer>
+</div>
+
+<script>
+(() => {
+  const ids = ['cote1','cote2','cote3','benefice','essaisSupp','arrondi'];
+  const els = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+  const optionCountChecks = [...document.querySelectorAll('.option-count')];
+  let activeOptionCount = 1;
+  const body = document.getElementById('tableBody');
+  const alertBox = document.getElementById('alertBox');
+  let selectedRowIndex = null;
+  let rowsData = [];
+
+  function fmt(value, exact) {
+    const n = exact ? value : Math.ceil(value - 1e-10);
+    const locale = ({fr:'fr-FR',en:'en-US',ru:'ru-RU',uz:'uz-UZ'})[currentLanguage] || 'fr-FR';
+    return n.toLocaleString(locale, {
+      minimumFractionDigits: exact ? 2 : 0,
+      maximumFractionDigits: exact ? 2 : 0
+    }) + ' ' + currencySymbol();
+  }
+
+
+  const languageSelect = document.getElementById('languageSelect');
+  const currencySelect = document.getElementById('currencySelect');
+  let currentLanguage = 'fr';
+  let currentCurrency = 'XOF';
+
+  const translations = {
+    fr: {
+      offline:'100 % hors connexion', language:'Langue', currency:'Devise',
+      pageTitle:'APEX-CARBA',
+      subtitle:'Calcul automatique des mises, récupération des pertes et bénéfice net cible.',
+      settings:'Paramètres du calcul', optionCount:'Nombre d’options à calculer',
+      oneOption:'1 option', twoOptions:'2 options', threeOptions:'3 options',
+      odds1:'Cote option 1', odds2:'Cote option 2', odds3:'Cote option 3',
+      target:'Bénéfice net souhaité', extra:'Essais supplémentaires',
+      mode:'Mode de calcul', ceil:'Arrondi à l’unité supérieure', exact:'Exact (2 décimales)',
+      capital:'Capital total requis', targetProfit:'Bénéfice net du palier affiché',
+      afterLosses:'Après récupération des mises précédentes',
+      combined:'Cote combinée (Dutching)', multiplier:'Multiplicateur :',
+      covered:'Probabilité implicite couverte', uncovered:'Part non couverte :',
+      hint:'Touchez une ligne pour marquer le palier en cours.',
+      reset:'Réinitialiser', copy:'Copier le tableau', copied:'Tableau copié !',
+      stage:'Palier', losses:'Pertes à récupérer', totalStage:'Total du palier',
+      cumulative:'Cumul engagé', minProfit:'Bénéfice net minimal',
+      noteTitle:'À savoir :',
+      note:'Le bénéfice affiché est le bénéfice minimal parmi les issues, après déduction de toutes les mises engagées dans le palier courant et les paliers précédents. Le calcul suppose qu’une seule option gagne et que les cotes restent inchangées. Une couverture mathématique ne garantit pas qu’une issue gagnante soit effectivement trouvée.',
+      footer:'Copyright by CARBA — Tous droits réservés. Mis à jour le 20 novembre 2026. APEX-CARBA V.3.0.',
+      selected:'option(s) sélectionnée(s)', initial:'Essai initial',
+      extraAttempt:'Essai supp.', totalAttempts:'essai(s) au total',
+      checkParams:'Paramètres à vérifier', returnGross:'Retour brut nécessaire :',
+      noMargin:'Aucune marge positive', nonCovered:'Part non couverte :',
+      invalid:(n)=>`Veuillez saisir ${n} cote(s) strictement supérieure(s) à 1,00 et un bénéfice positif.`,
+      impossible:(n,p)=>`Calcul impossible : la somme des inverses des ${n} cote(s) est de ${p} %. Elle doit être inférieure à 100 % pour dégager un bénéfice mathématique avant frais.`,
+      copyUnavailable:'La copie automatique est indisponible sur ce navigateur.',
+      option:'Option', targetLabel:'Bénéfice cible'
+    },
+    en: {
+      offline:'100% offline', language:'Language', currency:'Currency',
+      pageTitle:'APEX-CARBA',
+      subtitle:'Automatic stake calculation, loss recovery and target net profit.',
+      settings:'Calculation settings', optionCount:'Number of options to calculate',
+      oneOption:'1 option', twoOptions:'2 options', threeOptions:'3 options',
+      odds1:'Option 1 odds', odds2:'Option 2 odds', odds3:'Option 3 odds',
+      target:'Desired net profit', extra:'Additional attempts',
+      mode:'Calculation mode', ceil:'Round up to whole unit', exact:'Exact (2 decimals)',
+      capital:'Total capital required', targetProfit:'Net profit for displayed level',
+      afterLosses:'After recovering previous stakes',
+      combined:'Combined odds (Dutching)', multiplier:'Multiplier:',
+      covered:'Implied probability covered', uncovered:'Uncovered share:',
+      hint:'Tap a row to mark the current level.',
+      reset:'Reset', copy:'Copy table', copied:'Table copied!',
+      stage:'Level', losses:'Losses to recover', totalStage:'Level total',
+      cumulative:'Total committed', minProfit:'Minimum net profit',
+      noteTitle:'Please note:',
+      note:'Copyright by CARBA — All rights reserved. Updated on 20 November 2026. APEX-CARBA V.3.0.',
+      footer:'Copyright by CARBA — All rights reserved. Updated on 20 November 2026. APEX-CARBA V.3.0.',
+      selected:' option(s) selected', initial:'Initial attempt',
+      extraAttempt:'Extra attempt', totalAttempts:' attempt(s) in total',
+      checkParams:'Please check the parameters', returnGross:'Required gross return:',
+      noMargin:'No positive margin', nonCovered:'Uncovered share:',
+      invalid:(n)=>`Please enter ${n} odds value(s) strictly greater than 1.00 and a positive profit target.`,
+      impossible:(n,p)=>`Calculation impossible: the sum of the reciprocals of the ${n} odds is ${p}%. It must be below 100% to produce a mathematical profit before fees.`,
+      copyUnavailable:'Automatic copying is unavailable in this browser.',
+      option:'Option', targetLabel:'Target profit'
+    },
+    ru: {
+      offline:'100 % без интернета', language:'Язык', currency:'Валюта',
+      pageTitle:'APEX-CARBA',
+      subtitle:'Автоматический расчёт ставок, возврат потерь и целевая чистая прибыль.',
+      settings:'Параметры расчёта', optionCount:'Количество рассчитываемых вариантов',
+      oneOption:'1 вариант', twoOptions:'2 варианта', threeOptions:'3 варианта',
+      odds1:'Коэффициент варианта 1', odds2:'Коэффициент варианта 2', odds3:'Коэффициент варианта 3',
+      target:'Желаемая чистая прибыль', extra:'Дополнительные попытки',
+      mode:'Режим расчёта', ceil:'Округление вверх до целой единицы', exact:'Точно (2 знака после запятой)',
+      capital:'Необходимый общий капитал', targetProfit:'Чистая прибыль выбранного уровня',
+      afterLosses:'После возврата предыдущих ставок',
+      combined:'Общий коэффициент (Dutching)', multiplier:'Множитель:',
+      covered:'Покрытая подразумеваемая вероятность', uncovered:'Непокрытая доля:',
+      hint:'Нажмите на строку, чтобы отметить текущий уровень.',
+      reset:'Сбросить', copy:'Копировать таблицу', copied:'Таблица скопирована!',
+      stage:'Уровень', losses:'Потери к возмещению', totalStage:'Сумма уровня',
+      cumulative:'Всего вложено', minProfit:'Минимальная чистая прибыль',
+      noteTitle:'Важно:',
+      note:'Copyright by CARBA — Все права защищены. Обновлено 20 ноября 2026 года. APEX-CARBA V.3.0.',
+      footer:'Copyright by CARBA — Все права защищены. Обновлено 20 ноября 2026 года. APEX-CARBA V.3.0.',
+      selected:' вариант(ов) выбрано', initial:'Первая попытка',
+      extraAttempt:'Доп. попытка', totalAttempts:' попыток всего',
+      checkParams:'Проверьте параметры', returnGross:'Необходимая валовая выплата:',
+      noMargin:'Положительной маржи нет', nonCovered:'Непокрытая доля:',
+      invalid:(n)=>`Введите ${n} коэффициент(а/ов) строго больше 1,00 и положительную целевую прибыль.`,
+      impossible:(n,p)=>`Расчёт невозможен: сумма обратных величин ${n} коэффициент(ов) равна ${p} %. Она должна быть меньше 100 %, чтобы получить математическую прибыль до вычета расходов.`,
+      copyUnavailable:'Автоматическое копирование недоступно в этом браузере.',
+      option:'Вариант', targetLabel:'Целевая прибыль'
+    },
+    uz: {
+      offline:'100 % oflayn', language:'Til', currency:'Valyuta',
+      pageTitle:'APEX-CARBA',
+      subtitle:'Tikishlarni avtomatik hisoblash, yo‘qotishlarni qoplash va sof foyda maqsadi.',
+      settings:'Hisoblash sozlamalari', optionCount:'Hisoblanadigan variantlar soni',
+      oneOption:'1 variant', twoOptions:'2 variant', threeOptions:'3 variant',
+      odds1:'1-variant koeffitsiyenti', odds2:'2-variant koeffitsiyenti', odds3:'3-variant koeffitsiyenti',
+      target:'Istalgan sof foyda', extra:'Qo‘shimcha urinishlar',
+      mode:'Hisoblash usuli', ceil:'Yuqoriga yaxlitlash', exact:'Aniq (2 kasr xonasi)',
+      capital:'Kerakli jami kapital', targetProfit:'Tanlangan bosqichning sof foydasi',
+      afterLosses:'Oldingi tikishlar qoplangandan keyin',
+      combined:'Birlashtirilgan koeffitsiyent (Dutching)', multiplier:'Ko‘paytirgich:',
+      covered:'Qamrab olingan taxminiy ehtimollik', uncovered:'Qoplanmagan ulush:',
+      hint:'Joriy bosqichni belgilash uchun qatorga teging.',
+      reset:'Qayta tiklash', copy:'Jadvaldan nusxa olish', copied:'Jadval nusxalandi!',
+      stage:'Bosqich', losses:'Qoplanadigan yo‘qotishlar', totalStage:'Bosqich jami',
+      cumulative:'Jami tikilgan', minProfit:'Minimal sof foyda',
+      noteTitle:'Eslatma:',
+      note:'Copyright by CARBA — Barcha huquqlar himoyalangan. 2026-yil 20-noyabrda yangilandi. APEX-CARBA V.3.0.',
+      footer:'Copyright by CARBA — Barcha huquqlar himoyalangan. 2026-yil 20-noyabrda yangilandi. APEX-CARBA V.3.0.',
+      selected:' ta variant tanlandi', initial:'Dastlabki urinish',
+      extraAttempt:'Qo‘shimcha urinish', totalAttempts:' ta urinish jami',
+      checkParams:'Parametrlarni tekshiring', returnGross:'Kerakli yalpi qaytim:',
+      noMargin:'Ijobiy marja yo‘q', nonCovered:'Qoplanmagan ulush:',
+      invalid:(n)=>`${n} koeffitsiyentni 1,00 dan katta va foyda maqsadini musbat qiymatda kiriting.`,
+      impossible:(n,p)=>`Hisoblab bo‘lmaydi: ${n} koeffitsiyentning teskari qiymatlari yig‘indisi ${p} %. Xarajatlardan oldin matematik foyda olish uchun bu 100 % dan kam bo‘lishi kerak.`,
+      copyUnavailable:'Bu brauzerda avtomatik nusxa olish mavjud emas.',
+      option:'Variant', targetLabel:'Maqsadli foyda'
+    }
+  };
+
+  function translate(key, ...args) {
+    const value = translations[currentLanguage][key] ?? translations.fr[key] ?? key;
+    return typeof value === 'function' ? value(...args) : value;
+  }
+
+  function currencySymbol() {
+    return ({
+      EUR:'€',
+      USD:'$',
+      RUB:'₽',
+      UZS:'сўм',
+      XOF:'F CFA (XOF)',
+      XAF:'F CFA (XAF)',
+      USDT:'USDT'
+    })[currentCurrency] || '€';
+  }
+
+  function applyLanguage() {
+    const t = translations[currentLanguage];
+    document.documentElement.lang = currentLanguage;
+    document.querySelector('h1.brand-title').textContent = t.pageTitle;
+    document.querySelector('.subtitle').textContent = t.subtitle;
+    document.querySelector('header .badge').textContent = t.offline;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+    document.querySelector('.section-title').textContent = t.settings;
+    document.querySelector('.option-selector > label').textContent = t.optionCount;
+    const optionLabels = document.querySelectorAll('.option-checks label');
+    [t.oneOption,t.twoOptions,t.threeOptions].forEach((v,i) => {
+      if (optionLabels[i]) optionLabels[i].lastChild.textContent = ' ' + v;
+    });
+    ['cote1','cote2','cote3'].forEach((id,i) => {
+      document.querySelector(`label[for="${id}"]`).textContent = [t.odds1,t.odds2,t.odds3][i];
+    });
+    document.querySelector('label[for="benefice"]').textContent = t.target + ' (' + currencySymbol() + ')';
+    document.querySelector('label[for="essaisSupp"]').textContent = t.extra;
+    document.querySelector('label[for="arrondi"]').textContent = t.mode;
+    const rounding = document.getElementById('arrondi');
+    rounding.options[0].text = t.ceil;
+    rounding.options[1].text = t.exact;
+    document.querySelectorAll('.summary-cards .stat-label').forEach((el,i) => {
+      el.textContent = [t.capital,t.targetProfit,t.combined,t.covered][i];
+    });
+    document.querySelectorAll('.summary-cards .stat-sub')[1].textContent = t.afterLosses;
+    document.querySelector('.toolbar .hint').textContent = t.hint;
+    document.getElementById('btnReset').textContent = t.reset;
+    document.getElementById('btnCopy').textContent = t.copy;
+    document.querySelector('.note strong').textContent = t.noteTitle;
+    document.querySelector('.note').lastChild.textContent = ' ' + t.note;
+    document.querySelector('footer').textContent = t.footer;
+    refreshAttemptOptions();
+    calculate();
+  }
+
+  function refreshAttemptOptions() {
+    const select = document.getElementById('essaisSupp');
+    const selected = select.value || '19';
+    select.innerHTML = '';
+    for (let i=0;i<=19;i++) {
+      const option = document.createElement('option');
+      option.value = String(i);
+      option.textContent = `${i} (${i+1}${currentLanguage==='fr'?' essai(s) au total':currentLanguage==='en'?' attempt(s) total':currentLanguage==='ru'?' попыток всего':' ta urinish jami'})`;
+      select.appendChild(option);
+    }
+    select.value = selected;
+  }
+
+  function calculate() {
+    const optionCount = activeOptionCount;
+    [1,2,3].forEach(n => {
+      document.getElementById(`cote${n}Group`).style.display = n <= optionCount ? 'flex' : 'none';
+    });
+    document.getElementById('optionModeHint').textContent = `${optionCount}${translate('selected')}`;
+    // Reconstruire réellement les colonnes : aucune colonne inactive ne reste dans le tableau.
+    document.getElementById('tableHeaderRow').innerHTML =
+      `<th>${translate('stage')}</th>` +
+      Array.from({length: optionCount}, (_, i) => `<th>${translate('option')} ${i + 1}</th>`).join('') +
+      `<th>${translate('minProfit')}</th>`;
+    const odds = [els.cote1, els.cote2, els.cote3].slice(0, optionCount).map(e => Number.parseFloat(e.value));
+    const profitTarget = Number.parseFloat(els.benefice.value);
+    const extra = Number.parseInt(els.essaisSupp.value, 10);
+    const exact = els.arrondi.value === 'exact';
+
+    alertBox.style.display = 'none';
+    body.innerHTML = '';
+    rowsData = [];
+
+    if (odds.some(o => !Number.isFinite(o) || o <= 1) || !Number.isFinite(profitTarget) || profitTarget <= 0) {
+      alertBox.textContent = translate('invalid', optionCount);
+      alertBox.style.display = 'block';
+      resetStats();
+      return;
+    }
+
+    const invSum = odds.reduce((sum, odd) => sum + 1 / odd, 0);
+    if (invSum >= 1) {
+      alertBox.textContent = translate('impossible', optionCount, (invSum * 100).toFixed(2));
+      alertBox.style.display = 'block';
+      resetStats();
+      document.getElementById('statProba').textContent = (invSum * 100).toFixed(2) + ' %';
+      document.getElementById('statCoteComb').textContent = (1 / invSum).toFixed(3);
+      document.getElementById('statMarge').textContent = translate('noMargin');
+      return;
+    }
+
+    const combinedOdd = 1 / invSum;
+    const multiplier = 1 / (1 - invSum);
+    let cumulativeLoss = 0;
+
+    for (let i = 0; i <= extra; i++) {
+      const label = i === 0 ? `${translate('initial')} (1)` : `${translate('extraAttempt')} ${i} (${i + 1})`;
+      const requiredNet = profitTarget + cumulativeLoss;
+      const grossReturn = requiredNet * multiplier;
+      const stakes = odds.map(odd => {
+        const raw = grossReturn / odd;
+        return exact ? Math.round(raw * 100) / 100 : Math.ceil(raw - 1e-10);
+      });
+      const tierStake = stakes.reduce((a,b) => a+b, 0);
+      const newCumulative = cumulativeLoss + tierStake;
+      const netByOption = stakes.map((stake, index) => stake * odds[index] - newCumulative);
+      const minProfit = Math.min(...netByOption);
+      const maxProfit = Math.max(...netByOption);
+      const profitDisplay = Math.abs(maxProfit - minProfit) < (exact ? 0.05 : 1.01)
+        ? '+' + fmt(minProfit, exact)
+        : '+' + fmt(minProfit, exact) + ' à +' + fmt(maxProfit, exact);
+
+      const row = {label, lossesBefore:cumulativeLoss, stakes, tierStake, cumulative:newCumulative, profitDisplay};
+      rowsData.push(row);
+
+      const tr = document.createElement('tr');
+      if (selectedRowIndex === i) tr.classList.add('active-row');
+      tr.addEventListener('click', () => {
+        selectedRowIndex = selectedRowIndex === i ? null : i;
+        calculate();
+      });
+      const cells = [
+        `<strong>${label}</strong>`,
+        ...stakes.map(s => `<span class="stake">${fmt(s, exact)}</span>`),
+        `<span class="pill">${profitDisplay}</span>`
+      ];
+      tr.innerHTML = cells.map((cell, index) => `<td${index === 0 ? '' : ''}>${cell}</td>`).join('');
+      body.appendChild(tr);
+      cumulativeLoss = newCumulative;
+    }
+
+    document.getElementById('statCapital').textContent = fmt(cumulativeLoss, exact);
+    document.getElementById('statPaliers').textContent = `${currentLanguage==='fr'?'Pour ':currentLanguage==='en'?'For ':currentLanguage==='ru'?'Всего: ':'Jami: '}${extra + 1}${translate('totalAttempts')}`;
+    document.getElementById('statBenefice').textContent = rowsData[selectedRowIndex ?? 0]?.profitDisplay ?? ('+' + fmt(profitTarget, exact));
+    document.getElementById('statCoteComb').textContent = combinedOdd.toFixed(3);
+    document.getElementById('statMulti').textContent = `${translate('returnGross')} x${multiplier.toFixed(3)}`;
+    document.getElementById('statProba').textContent = (invSum * 100).toFixed(2) + ' %';
+    document.getElementById('statMarge').textContent = `${translate('nonCovered')} ${(100 - invSum * 100).toFixed(2)} %`;
+  }
+
+  function resetStats() {
+    ['statCapital','statBenefice','statCoteComb','statProba'].forEach(id => document.getElementById(id).textContent = '—');
+    document.getElementById('statPaliers').textContent = translate('checkParams');
+    document.getElementById('statMulti').textContent = `${translate('multiplier')} —`;
+    document.getElementById('statMarge').textContent = `${translate('nonCovered')} —`;
+  }
+
+  ids.forEach(id => {
+    els[id].addEventListener('input', calculate);
+    els[id].addEventListener('change', calculate);
+  });
+  optionCountChecks.forEach(check => check.addEventListener('change', () => {
+    if (check.checked) {
+      activeOptionCount = Number(check.value);
+      optionCountChecks.forEach(other => { other.checked = other === check; });
+    } else {
+      // Une seule sélection doit toujours rester active.
+      check.checked = true;
+    }
+    selectedRowIndex = null;
+    calculate();
+  }));
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    els.cote1.value = '1.90'; els.cote2.value = '7.63'; els.cote3.value = '4.50';
+    els.benefice.value = '500'; els.essaisSupp.value = '2'; els.arrondi.value = 'exact';
+    activeOptionCount = 1;
+    optionCountChecks.forEach(check => { check.checked = Number(check.value) === 1; });
+    selectedRowIndex = null; calculate();
+  });
+
+  document.getElementById('btnCopy').addEventListener('click', async () => {
+    const exact = els.arrondi.value === 'exact';
+    const oddsText = [els.cote1.value,els.cote2.value,els.cote3.value].slice(0,activeOptionCount).join(' / ');
+    let output = `${translations[currentLanguage].pageTitle} — ${activeOptionCount} ${translate('option')}\n${translate('odds1')}: ${oddsText} | ${translate('targetLabel')}: ${els.benefice.value} ${currencySymbol()}\n`;
+    output += translate('stage') + '\t' + Array.from({length:activeOptionCount},(_,i)=>`${translate('option')} ${i+1}`).join('\t') + '\t' + translate('minProfit') + '\n';
+    rowsData.forEach(r => {
+      output += [r.label,...r.stakes.map(s=>fmt(s,exact)),r.profitDisplay].join('\t') + '\n';
+    });
+    const btn = document.getElementById('btnCopy');
+    try {
+      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(output);
+      else {
+        const ta = document.createElement('textarea'); ta.value = output;
+        document.body.appendChild(ta); ta.select();
+        const ok = document.execCommand('copy'); ta.remove();
+        if (!ok) throw new Error('Copie indisponible');
+      }
+      const old = btn.textContent; btn.textContent = translate('copied');
+      setTimeout(() => btn.textContent = old, 1800);
+    } catch {
+      alert(translate('copyUnavailable'));
+    }
+  });
+
+  languageSelect.addEventListener('change', () => {
+    currentLanguage = languageSelect.value;
+    applyLanguage();
+  });
+  currencySelect.addEventListener('change', () => {
+    currentCurrency = currencySelect.value;
+    applyLanguage();
+  });
+
+  applyLanguage();
+})();
+</script>
+</body>
+</html>
